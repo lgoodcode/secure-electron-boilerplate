@@ -1,0 +1,8 @@
+# Node modules
+node_modules
+
+# Production and development builds
+release
+
+# Development bundle
+src/preload/preload.dev.js
