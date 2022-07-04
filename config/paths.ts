@@ -18,12 +18,11 @@ export const indexHTMLFile = resolveApp('src/renderer/index.html')
 
 export const releasePath = resolveApp('release')
 export const packagePath = resolveApp('release/package')
-export const buildPath = resolveApp('release/build')
+export const buildPath = resolveApp('release/app/build')
 
-export const buildMainPath = join(buildPath, 'main')
-export const buildMainFile = join(buildMainPath, 'main.js')
-export const buildRendererPath = join(buildPath, 'renderer')
-export const buildRendererFile = join(buildRendererPath, 'renderer.js')
+export const buildMainFile = join(buildPath, 'main.js')
+export const buildPreloadFile = join(buildPath, 'preload.js')
+export const buildRendererFile = join(buildPath, 'renderer.js')
 
 export default {
 	envPath,
@@ -39,8 +38,7 @@ export default {
 	releasePath,
 	packagePath,
 	buildPath,
-	buildMainPath,
 	buildMainFile,
-	buildRendererPath,
+	buildPreloadFile,
 	buildRendererFile,
 }

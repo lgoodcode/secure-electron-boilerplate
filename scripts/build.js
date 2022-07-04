@@ -1,10 +1,18 @@
 import chalk from 'chalk'
+import { mkdirSync } from 'fs'
+import { buildPath, packagePath } from '../config/paths'
+import clean from './clean'
 import runScript from './runScript'
 
 const args = process.argv.slice(2)
 
 const build = () =>
 	new Promise<boolean>(async (res) => {
+		await clean()
+
+		mkdirSync(packagePath)
+		mkdirSync(buildPath)
+
 		console.log(chalk.cyan('Building main...'))
 		const main = runScript('main', 'npm', ['run', 'build:main'])
 

@@ -1,7 +1,8 @@
+// Load environment variables first because they can be used in other files
 import { app, shell, BrowserWindow, type Event } from 'electron'
 import isValidOrigin from '../lib/isValidOrigin'
 import permissionsHandler from '../lib/permissionsHandler'
-import configureCSP from '../lib/configureCSP'
+import configureCsp from '../lib/configureCsp'
 import { createWindow } from './window'
 // All main IPC functioning
 import './ipcMain'
@@ -69,7 +70,7 @@ app
 		})
 	})
 	.then(permissionsHandler)
-	.then(configureCSP)
+	.then(configureCsp)
 	.catch((err) => console.error('Failed to create window', err))
 
 /**

@@ -1,4 +1,4 @@
-import { BrowserWindow } from 'electron'
+import { app, BrowserWindow } from 'electron'
 import { join } from 'path'
 import { srcPreloadPath } from '../../config/paths'
 import getAsset from '../lib/getAsset'
@@ -6,28 +6,33 @@ import resolveHtmlPath from '../lib/resolveHtmlPath'
 import MenuBuilder from './menu'
 
 export let mainWindow: BrowserWindow | null = null
-const isProd = process.env.NODE_ENV === 'production'
-const isDev = process.env.NODE_ENV === 'development'
 
-// Debug features like the shortcuts for inspector and dev tools
-if (isDev) {
+// Debug features like the shortcuts for inspector and dev tools.
+// The package will ONLY run in development mode, even if explicitly set.
+if (process.env.NODE_ENV === 'development') {
 	import('electron-debug').then(({ default: debug, openDevTools }) => {
 		debug()
 		openDevTools()
 	})
 }
-
 export const createWindow = async () => {
 	mainWindow = new BrowserWindow({
 		show: false,
 		width: 1024,
 		height: 768,
+		minWidth: 480,
+		minHeight: 640,
 		icon: getAsset('icon.ico'),
 		webPreferences: {
-			devTools: !isProd,
-			preload: isProd
-				? join(__dirname, '../preload/preload.ts')
+			// Allow devTools in development or debugging production build
+			devTools: process.env.NODE_ENV !== 'production' || process.env.DEBUG_PROD === 'true',
+			// When packaged as an electron app, it will look within the asar file,
+			// which will contain the files from the release/app/build directory,
+			// so we use __dirname to get it relative to that directory.
+			preload: app.isPackaged
+				? join(__dirname, 'preload.js')
 				: join(srcPreloadPath, 'preload.dev.js'),
+			// Security features explicitly configured
 			contextIsolation: true,
 			nodeIntegration: false,
 			webSecurity: true,
@@ -59,6 +64,11 @@ export const createWindow = async () => {
 			mainWindow.minimize()
 		} else {
 			mainWindow.show()
+		}
+
+		// Open the devTools for debugging production build
+		if (process.env.DEBUG_PROD === 'true') {
+			mainWindow.webContents.openDevTools()
 		}
 	})
 

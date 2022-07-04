@@ -1,16 +1,18 @@
-import WebpackDevServer from 'webpack-dev-server'
+import { config as dotenv } from 'dotenv'
 import webpack from 'webpack'
+import WebpackDevServer from 'webpack-dev-server'
 import chalk from 'chalk'
-import rendererConfig from '../config/webpack.config.renderer'
-import checkBuild from './checkBuild'
-import '../config/env'
-import build from './build'
 import runScript from './runScript'
+import rendererConfig from '../config/webpack.config.renderer'
+
+dotenv({ path: '.env.local' })
 
 const compiler = webpack(rendererConfig)
-const devServerOptions = {
-	compress: true,
+const devServerOptions: WebpackDevServer.Configuration = {
+	host: 'localhost',
 	hot: true,
+	compress: true,
+	port: process.env.PORT || 8000,
 	headers: { 'Access-Control-Allow-Origin': '*' },
 	static: {
 		publicPath: '/',
@@ -22,16 +24,6 @@ const devServerOptions = {
 const server = new WebpackDevServer(devServerOptions, compiler)
 
 const startServer = async () => {
-	console.log(chalk.cyan('Checking if the main process and renderer has been built...'))
-
-	if (!(await checkBuild())) {
-		console.log(chalk.yellow('Starting the build process...'))
-		// If build fails, abort the process
-		if (!(await build())) {
-			return process.exit(1)
-		}
-	}
-
 	console.log(chalk.cyan('Starting preload file processing...'))
 	runScript('preload', 'npm', ['run', 'start:preload'])
 

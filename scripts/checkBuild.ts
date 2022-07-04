@@ -1,6 +1,8 @@
 import chalk from 'chalk'
 import { existsSync } from 'fs'
-import { buildMainPath, buildRendererPath } from '../config/paths'
+import { buildMainFile, buildRendererFile } from '../config/paths'
+
+const args = process.argv.slice(2)
 
 /**
  * Checks the build directories which are necessary for the application to run.
@@ -9,7 +11,7 @@ import { buildMainPath, buildRendererPath } from '../config/paths'
  */
 const checkBuild = (test?: boolean) =>
 	new Promise<boolean>((res) => {
-		if (!existsSync(buildMainPath)) {
+		if (!existsSync(buildMainFile)) {
 			console.log(chalk.red.bold('The main process has not been built yet.'))
 
 			if (test) {
@@ -18,7 +20,7 @@ const checkBuild = (test?: boolean) =>
 			return res(false)
 		}
 
-		if (!existsSync(buildRendererPath)) {
+		if (!existsSync(buildRendererFile)) {
 			console.error(chalk.red.bold('The renderer process has not been built yet.'))
 
 			if (test) {
@@ -30,7 +32,7 @@ const checkBuild = (test?: boolean) =>
 		res(true)
 	})
 
-if (process.env.NODE_ENV === 'test') {
+if (process.env.NODE_ENV === 'test' || args.includes('--run')) {
 	checkBuild(true)
 }
 

@@ -1,8 +1,8 @@
 # Node modules
 node_modules
 
-# Production and development builds
+# Production builds and packages
 release
 
-# Development bundle
+# Development bundle of preload script
 src/preload/preload.dev.js

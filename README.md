@@ -2,12 +2,27 @@
 
 Quick start building a Electron application with a clean and simple boilerplate.
 
+This contains the basic configuration and structure to allow you to build any kind
+of Electron application you want. Whatever framework you want to use, you easily
+implement it without having to deal with removing the packages you don't need!
+
+The security of this boilerplate is based on the checklist provided by Electron
+[Electron Security Guide](https://electronjs.org/docs/security)
+and inspired from [secure-electron-template](https://github.com/reZach/secure-electron-template/blob/master/app/electron/main.js)].
+
+## TODO
+
+- [ ] Allow no-typescript
+- [ ] Complete the basic example app
+- [ ] Remove React
+- [ ] Fix tests (need to mock ipcRenderer for frontend tests)
+
 ## Table of contents
 - [Description](#description)
 - [Get Started](#get-started)
+- [Project Structre](#project-structure)
 - [Security Features](#security-features)
 - [Configuration](#configuration)
-<!-- - [License](#license) -->
 
 ## Description
 
@@ -35,7 +50,20 @@ npm install (or yarn)
 npm start (or yarn start)
 ```
 
-## Features
+## Project Structure
+
+### `config`
+
+Contains the different webpack configuration files for each part as well as other utilities.
+
+`env.ts` is used to load environment variables and perform checks to ensure required variables
+are set.
+
+`paths.ts` contains the paths to the different parts of the project.
+
+Then there are the different webpack configurations.
+
+### UNDER CONSTRUCTION
 
 
 ## Security Features
@@ -179,6 +207,8 @@ All Web Frames can in theory send IPC messages to the main process, including if
 This is handled using `lib/validateIpcSender.ts` which validates that the sender is the origin, comparing the host of the
 url of the `senderFrame` with the environment variables that are set.
 
+
+## UNDER CONSTRUCTION
 ## Configuration
 
 

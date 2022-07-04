@@ -1,4 +1,4 @@
-const VALID_ORIGINS = (process.env.ALLOWED_ORIGINS || '').split(',').map((origin) => origin.trim())
+import VALID_ORIGINS from '../../config/allowedOrigins'
 
 const isValidOrigin = (origin: string) => {
 	const parsedOrigin = new URL(origin)

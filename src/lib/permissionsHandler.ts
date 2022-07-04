@@ -4,6 +4,20 @@ import { session } from 'electron'
 const allowedPermissions: string[] = []
 
 /**
+ * Electron doesn't use the environment variables at runtime. So we define
+ * the function at build time.
+ */
+let verifyUrl: (parsedUrl: URL) => boolean
+
+if (process.env.NODE_ENV === 'production') {
+	verifyUrl = (parsedUrl) => /https:|file:/.test(parsedUrl.protocol)
+} else {
+	verifyUrl = (parsedUrl) =>
+		parsedUrl.protocol !== 'https:' ||
+		parsedUrl.hostname !== `localhost:${process.env.PORT || 8000}`
+}
+
+/**
  * 5. Handle session permission requests from remote content
  *
  * The allowed permissions are whitelisted and if the requested permission is not
@@ -14,10 +28,7 @@ export default function permissionsHandler() {
 		const parsedUrl = new URL(webContents.getURL())
 
 		// Verify URL
-		if (
-			parsedUrl.protocol !== 'https:' ||
-			parsedUrl.hostname !== `${process.env.HOSTNAME}:${process.env.PORT}`
-		) {
+		if (!verifyUrl(parsedUrl)) {
 			return callback(false)
 		}
 

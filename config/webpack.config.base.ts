@@ -19,6 +19,7 @@ const config: Configuration = {
 				test: /\.ts[x]?$/,
 				exclude: /node_modules/,
 				use: {
+					// transpileOnly is set to `true` by default with `fork-ts-checker-webpack-plugin`
 					loader: 'ts-loader',
 				},
 			},

@@ -5,7 +5,8 @@ import paths from './paths'
 import baseConfig from './webpack.config.base'
 
 /**
- * Configuration is only used in development
+ * Configuration is only used in development. In production, it is bundled
+ * with the main file.
  */
 const preloaderConfig: webpack.Configuration = {
 	name: 'preload',

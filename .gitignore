@@ -6,8 +6,9 @@ node_modules
 # testing
 coverage
 
-# production
-build
+# production - we want the app with the package.json but not the built files
+release/app/build
+release/package
 
 # eslintcache for the lint-staged pre-commit
 .eslintcache

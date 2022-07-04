@@ -24,16 +24,12 @@ const rendererConfig: webpack.Configuration = {
 	bail: isProduction,
 	entry: isProduction
 		? join(paths.srcRendererPath, 'index.tsx')
-		: [
-				`webpack-dev-server/client?http://localhost:${process.env.PORT}/dist`,
-				'webpack/hot/only-dev-server',
-				join(paths.srcRendererPath, 'index.tsx'),
-		  ],
+		: ['webpack/hot/only-dev-server', join(paths.srcRendererPath, 'index.tsx')],
 	target: ['web', 'electron-renderer'],
 	stats: isDevelopment ? 'errors-warnings' : 'errors-only',
 	output: {
 		filename: isProduction ? 'renderer.js' : 'renderer.dev.js',
-		path: paths.buildRendererPath,
+		path: paths.buildPath,
 		publicPath: isDevelopment ? '/' : './',
 		library: {
 			type: 'umd',

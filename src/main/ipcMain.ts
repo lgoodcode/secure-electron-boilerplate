@@ -9,10 +9,14 @@ import validateIpcSender from '../lib/validateIpcSender'
  * It is recommended to use `reply` to send a response to the renderer process
  * to ensure that it is sent to the proper sender.
  */
-ipcMain.on('ipc-example', async (event) => {
+ipcMain.once('ipc-example', async (event) => {
 	if (validateIpcSender(event.senderFrame)) {
 		event.reply('ipc-example', 'pong')
-	} else {
-		console.error('Invalid IPC sender')
+	}
+})
+
+ipcMain.on('click', async (event) => {
+	if (validateIpcSender(event.senderFrame)) {
+		event.reply('click', 'clicked')
 	}
 })
