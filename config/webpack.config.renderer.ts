@@ -7,8 +7,10 @@ import CssMinimizerPlugin from 'css-minimizer-webpack-plugin'
 import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin'
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
+import CspHtmlWebpackPlugin from 'csp-html-webpack-plugin'
 import baseConfig from './webpack.config.base'
 import paths from './paths'
+import CSP from './csp'
 
 const isDevelopment = process.env.NODE_ENV === 'development'
 const isProduction = process.env.NODE_ENV === 'production'
@@ -75,6 +77,17 @@ const rendererConfig: webpack.Configuration = {
 			isDevelopment,
 			nodeModules: paths.nodeModulesPath,
 		}),
+		new CspHtmlWebpackPlugin(
+			Object.entries(CSP).reduce((acc: Record<string, string[]>, [key, value]) => {
+				acc[key] = [value]
+				return acc
+			}, {}),
+			{
+				hashEnabled: {
+					'style-src': false,
+				},
+			}
+		),
 	].filter(Boolean) as webpack.WebpackPluginInstance[],
 }
 

@@ -13,6 +13,4 @@ const CSP =
 				'worker-src': "'none'",
 		  }
 
-export default Object.entries(CSP)
-	.map(([key, value]) => `${key} ${value}`)
-	.join('; ')
+export default CSP

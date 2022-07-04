@@ -6,7 +6,9 @@ export default function configureCSP() {
 		callback({
 			responseHeaders: {
 				...details.responseHeaders,
-				'Content-Security-Policy': CSP,
+				'Content-Security-Policy': Object.entries(CSP)
+					.map(([key, value]) => `${key} ${value}`)
+					.join('; '),
 			},
 		})
 	})
