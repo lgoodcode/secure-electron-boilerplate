@@ -9,7 +9,7 @@ export let mainWindow: BrowserWindow | null = null
 
 // Debug features like the shortcuts for inspector and dev tools.
 // The package will ONLY run in development mode, even if explicitly set.
-if (process.env.NODE_ENV === 'development') {
+if (!app.isPackaged) {
 	import('electron-debug').then(({ default: debug, openDevTools }) => {
 		debug()
 		openDevTools()
@@ -25,7 +25,7 @@ export const createWindow = async () => {
 		icon: getAsset('icon.ico'),
 		webPreferences: {
 			// Allow devTools in development or debugging production build
-			devTools: process.env.NODE_ENV !== 'production' || process.env.DEBUG_PROD === 'true',
+			devTools: !app.isPackaged || process.env.DEBUG_PROD === 'true',
 			// When packaged as an electron app, it will look within the asar file,
 			// which will contain the files from the release/app/build directory,
 			// so we use __dirname to get it relative to that directory.

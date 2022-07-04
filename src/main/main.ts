@@ -8,9 +8,6 @@ import { createWindow } from './window'
 // All main IPC functioning
 import './ipcMain'
 
-const isDev = process.env.NODE_ENV === 'development'
-const isProd = process.env.NODE_ENV === 'production'
-
 // Catches uncaught exceptions
 unhandled({ showDialog: true })
 
@@ -80,21 +77,21 @@ app
 /**
  * Install devtool extensions for development
  */
-if (isDev) {
+if (!app.isPackaged) {
 	app.whenReady().then(async function installDevTools() {
 		await import('../lib/installExtensions')
 	})
 }
 
 /**
- * Check for updates when in production
+ * Check for updates when packaged
  */
-if (isProd) {
-	app.whenReady().then(async function checkForUpdates() {
-		const { autoUpdater } = await import('electron-updater')
-		autoUpdater.checkForUpdatesAndNotify()
-	})
-}
+// if (app.isPackaged) {
+// 	app.whenReady().then(async function checkForUpdates() {
+// 		const { autoUpdater } = await import('electron-updater')
+// 		autoUpdater.checkForUpdatesAndNotify()
+// 	})
+// }
 
 /**
  * Handles rendering and controlling web pages.

@@ -21,16 +21,14 @@ const mainConfig: webpack.Configuration = {
 		path: paths.buildPath,
 		filename: '[name].js',
 	},
-	optimization: !isProduction
-		? {}
-		: {
-				minimize: true,
-				minimizer: [
-					new TerserPlugin({
-						parallel: true,
-					}),
-				],
-		  },
+	optimization: {
+		minimize: isProduction,
+		minimizer: [
+			new TerserPlugin({
+				parallel: true,
+			}),
+		],
+	},
 	plugins: [
 		new BundleAnalyzerPlugin({
 			analyzerMode: process.env.ANALYZE === 'true' ? 'server' : 'disabled',
