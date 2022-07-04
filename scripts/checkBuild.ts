@@ -2,8 +2,6 @@ import chalk from 'chalk'
 import { existsSync } from 'fs'
 import { buildMainFile, buildRendererFile } from '../config/paths'
 
-const args = process.argv.slice(2)
-
 /**
  * Checks the build directories which are necessary for the application to run.
  * The `test` parameter is used when running jest to directly invoke the function
@@ -32,7 +30,7 @@ const checkBuild = (test?: boolean) =>
 		res(true)
 	})
 
-if (process.env.NODE_ENV === 'test' || args.includes('--run')) {
+if (process.env.NODE_ENV === 'test' || process.argv.slice(2).includes('--run')) {
 	checkBuild(true)
 }
 

@@ -1,29 +1,28 @@
 {
   "name": "electron-react-typescript-webpack",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Fast, secure, unopinionated, Electron boilerplate",
   "author": "Lawrence Good",
   "license": "MIT",
   "scripts": {
-		"clean": "ts-node scripts/clean.js --run",
+    "clean": "ts-node scripts/clean.js --run",
     "start": "cross-env NODE_ENV=development ts-node scripts/start.ts",
     "start:main": "cross-env NODE_ENV=development electronmon -r ts-node/register ./src/main/main.ts",
     "start:preload": "webpack --config config/webpack.config.preload.ts",
     "build": "ts-node scripts/build.ts --run",
     "build:main": "cross-env NODE_ENV=production webpack --config config/webpack.config.main.ts",
     "build:renderer": "cross-env NODE_ENV=production webpack --config config/webpack.config.renderer.ts",
-    "pack": "ts-node scripts/checkBuild.ts --run && electron-builder",
-    "pack:dir": "ts-node scripts/checkBuild.ts --run && electron-builder --dir",
-    "pack:build": "npm run build && electron-builder",
-    "pack:start": "npx electron release/app",
-		"test": "jest",
+    "pack": "npm run build && electron-builder",
+		"pack:dir": "npm run build && electron-builder --dir",
+    "pack:dev": "ts-node scripts/checkBuild.ts --run && electron-builder --dir && cross-env DEBUG_PROD=true electron release/app",
+    "test": "jest",
     "test:watch": "jest --watchAll",
     "postinstall": "electron-builder install-app-deps"
   },
   "build": {
     "productName": "Secure Electron Boilerplate",
     "appId": "com.example.secure-electron-boilerplate",
-		"artifactName": "${productName}.${ext}",
+    "artifactName": "${productName}.${ext}",
     "directories": {
       "app": "release/app",
       "buildResources": "assets",
@@ -40,21 +39,21 @@
     "win": {
       "target": [
         {
-					"target": "portable",
-					"arch": [
-						"x64"
-					]
-				}
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
       ]
     },
-		"nsis": {
-			"uninstallDisplayName": "Secure Electron Boilerplate"
-		}
+    "nsis": {
+      "uninstallDisplayName": "Secure Electron Boilerplate"
+    }
   },
   "lint-staged": {
-		"src/**/*.{js,jsx,ts,tsx}": "eslint --cache --fix",
-		"config/**/*{.js,.ts}": "eslint --cache --fix",
-		"scripts/**/*{.js,.ts}": "eslint --cache --fix"
+    "src/**/*.{js,jsx,ts,tsx}": "eslint --cache --fix",
+    "config/**/*{.js,.ts}": "eslint --cache --fix",
+    "scripts/**/*{.js,.ts}": "eslint --cache --fix"
   },
   "electronmon": {
     "patterns": [
@@ -103,7 +102,6 @@
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",
     "@testing-library/user-event": "^14.2.1",
-    "@types/csp-html-webpack-plugin": "^3.0.2",
     "@types/jest": "^28.1.3",
     "@types/node": "^18.0.0",
     "@types/react": "^18.0.14",

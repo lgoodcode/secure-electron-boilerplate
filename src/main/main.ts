@@ -1,5 +1,6 @@
 // Load environment variables first because they can be used in other files
 import { app, shell, BrowserWindow, type Event } from 'electron'
+import unhandled from 'electron-unhandled'
 import isValidOrigin from '../lib/isValidOrigin'
 import permissionsHandler from '../lib/permissionsHandler'
 import configureCsp from '../lib/configureCsp'
@@ -9,6 +10,9 @@ import './ipcMain'
 
 const isDev = process.env.NODE_ENV === 'development'
 const isProd = process.env.NODE_ENV === 'production'
+
+// Catches uncaught exceptions
+unhandled({ showDialog: true })
 
 /**
  * 4. Enable process sandboxing
