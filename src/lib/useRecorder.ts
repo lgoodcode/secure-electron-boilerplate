@@ -1,5 +1,10 @@
 import { useEffect, useState } from 'react'
 
+const {
+	electron: { ipcRenderer },
+	processVideo,
+} = window
+
 const getStreamConstraints = (id: string) => ({
 	audio: false,
 	video: {
@@ -46,19 +51,28 @@ export default function useRecorder(videoRef?: React.RefObject<HTMLVideoElement>
 		}
 	}
 
-	// If we are given a video element to manage, set it in state
+	/**
+	 * If a video element was passed in to manage, set it in state. Because React
+	 * will re-render and execute this useEffect hook because the videoRef will
+	 * change, we check if the video element is already set to not repeat it.
+	 */
 	useEffect(() => {
-		if (videoRef && videoRef.current) {
+		if (videoRef && videoRef.current && !video) {
 			setVideo(videoRef.current)
 		}
 	}, [videoRef?.current])
 
-	// Manage the video when given a new stream
+	/**
+	 * Once the video element is set, we setup the listener on the renderer
+	 * process for when the user selects a video source. When selected, we
+	 * get the id and get the stream and set it to the video element for
+	 * previewing.
+	 */
 	useEffect(() => {
 		if (video) {
 			// Once the main process has sent the video sources, get the stream
 			// using the navigator, set the playback source, and create the recorder.
-			window.electron.ipcRenderer.on('getVideoSources', async (id) => {
+			ipcRenderer.on('getVideoSources', async (id) => {
 				// Need to set type to any because the chromeMediaSource properties
 				// are not part of the standard.
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -68,7 +82,7 @@ export default function useRecorder(videoRef?: React.RefObject<HTMLVideoElement>
 
 				// Set the stream to preview the video
 				video.srcObject = stream
-				// Prevent video from playing before it is ready.
+				// Play video when stream is loaded
 				video.onloadeddata = () => video.play()
 
 				setStream(stream)
@@ -76,36 +90,51 @@ export default function useRecorder(videoRef?: React.RefObject<HTMLVideoElement>
 		}
 	}, [video])
 
+	/**
+	 * Whenever a stream is set, by the user selecting a new source to record,
+	 * we create and set a new recorder for that stream. We set the event
+	 * listeners for the recorder on recording and when stopped.
+	 */
 	useEffect(() => {
 		if (stream) {
 			const newRecorder = new MediaRecorder(stream, recorderOptions)
 
+			// When recording, add the chunks to the chunks array
 			newRecorder.addEventListener('dataavailable', (e) => {
 				chunks.push(e.data)
 			})
 
+			// When done recording, create a blob and send it to the main process
 			newRecorder.addEventListener('stop', async () => {
 				const blob = new Blob(chunks, {
 					type: 'video/webm; codecs=vp9',
 				})
 
-				window.video.process(await blob.arrayBuffer())
+				// Ipc communication to main process
+				processVideo(await blob.arrayBuffer())
+
+				// Done recording; remove stream, clear source flag, and reset chunks
 				setStream(null)
 				setHasSource(false)
 				setChunks([])
 			})
 
+			// Set source flag and recorder
 			setHasSource(true)
 			setRecorder(newRecorder)
 		}
 	}, [stream])
 
+	/**
+	 * Once a video element is set, we want to start listening for when the
+	 * main process has finished processing the video that was sent when the
+	 * recording concluded.
+	 */
 	useEffect(() => {
 		if (video) {
-			// Once the main process has finished handling the video
-			window.electron.ipcRenderer.on('processVideo', (err) => {
+			ipcRenderer.on('processVideo', (err) => {
 				if (err) {
-					console.error(err)
+					console.warn(err)
 				} else {
 					console.log('Video processed')
 				}
@@ -117,14 +146,15 @@ export default function useRecorder(videoRef?: React.RefObject<HTMLVideoElement>
 				setProcessing(false)
 			})
 		}
-		return () => window.electron.ipcRenderer.off('processVideo')
+		// Cleanup, remove event listener if video is changed
+		return () => ipcRenderer.off('processVideo')
 	}, [video])
 
 	return {
 		hasSource,
 		recording,
 		processing,
-		setStream,
+		setVideo,
 		startRecording,
 		stopRecording,
 	}

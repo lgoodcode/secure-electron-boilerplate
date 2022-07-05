@@ -1,7 +1,6 @@
 import { session } from 'electron'
 
-// Full list here: https://developer.chrome.com/extensions/declare_permissions#manifest
-const allowedPermissions: string[] = ['desktopCapture', 'media']
+const allowedPermissions: string[] = ['media']
 
 /**
  * Electron doesn't use the environment variables at runtime. So we define
@@ -24,25 +23,20 @@ if (process.env.NODE_ENV === 'production') {
  * specified, it is blocked.
  */
 export default function permissionsHandler() {
-	session.defaultSession.setPermissionRequestHandler((_, __, callback) => {
-		callback(true)
+	session.defaultSession.setPermissionRequestHandler((webContents, permission, callback) => {
+		const parsedUrl = new URL(webContents.getURL())
+
+		// Verify URL
+		if (!verifyUrl(parsedUrl)) {
+			return callback(false)
+		}
+
+		// Verify permission
+		if (allowedPermissions.includes(permission)) {
+			callback(true)
+		} else {
+			console.error(`The application blocked a request permission for "${permission}"`)
+			callback(false)
+		}
 	})
 }
-// export default function permissionsHandler() {
-// 	session.defaultSession.setPermissionRequestHandler((webContents, permission, callback) => {
-// 		const parsedUrl = new URL(webContents.getURL())
-
-// 		// Verify URL
-// 		if (!verifyUrl(parsedUrl)) {
-// 			return callback(false)
-// 		}
-
-// 		// Verify permission
-// 		if (allowedPermissions.includes(permission)) {
-// 			callback(true)
-// 		} else {
-// 			console.error(`The application blocked a request permission for "${permission}"`)
-// 			callback(false)
-// 		}
-// 	})
-// }

@@ -12,9 +12,7 @@ declare global {
 				off(channel: Channels): void
 			}
 		}
-		video: {
-			process(ab: ArrayBuffer): void
-		}
+		processVideo(ab: ArrayBuffer): void
 	}
 
 	namespace Electron {

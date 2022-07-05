@@ -1,6 +1,6 @@
 {
   "name": "electron-react-typescript-webpack",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Fast, secure, unopinionated, Electron boilerplate",
   "author": "Lawrence Good",
   "license": "MIT",
@@ -47,8 +47,8 @@
   },
   "lint-staged": {
     "src/**/*.{js,jsx,ts,tsx}": "eslint --cache --fix",
-    "config/**/*{.js,.ts}": "eslint --cache --fix",
-    "scripts/**/*{.js,.ts}": "eslint --cache --fix"
+    "config/**/*.{js,ts}": "eslint --cache --fix",
+    "scripts/**/*.{js,ts}": "eslint --cache --fix"
   },
   "electronmon": {
     "patterns": [

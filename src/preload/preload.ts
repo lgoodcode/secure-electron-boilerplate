@@ -21,8 +21,6 @@ contextBridge.exposeInMainWorld('electron', {
 	},
 })
 
-contextBridge.exposeInMainWorld('video', {
-	process(ab: ArrayBuffer) {
-		ipcRenderer.send('processVideo', ab)
-	},
+contextBridge.exposeInMainWorld('processVideo', (ab: ArrayBuffer) => {
+	ipcRenderer.send('processVideo', ab)
 })
