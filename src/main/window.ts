@@ -18,10 +18,12 @@ if (!app.isPackaged) {
 export const createWindow = async () => {
 	mainWindow = new BrowserWindow({
 		show: false,
-		width: 1024,
+		width: 1200,
 		height: 768,
-		minWidth: 480,
-		minHeight: 640,
+		minWidth: 640,
+		minHeight: 840,
+		maxWidth: 1280,
+		maxHeight: 1024,
 		icon: getAsset('icon.ico'),
 		webPreferences: {
 			// Allow devTools in development or debugging production build

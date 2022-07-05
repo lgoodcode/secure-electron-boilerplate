@@ -1,6 +1,5 @@
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron'
-
-export type Channels = 'ipc-example' | 'click'
+import { Channels } from 'preload'
 
 contextBridge.exposeInMainWorld('electron', {
 	ipcRenderer: {
@@ -16,5 +15,14 @@ contextBridge.exposeInMainWorld('electron', {
 		once(channel: Channels, handler: (...args: unknown[]) => void) {
 			ipcRenderer.once(channel, (_event, ...args) => handler(...args))
 		},
+		off(channel: Channels) {
+			ipcRenderer.off(channel, () => null)
+		},
+	},
+})
+
+contextBridge.exposeInMainWorld('video', {
+	process(ab: ArrayBuffer) {
+		ipcRenderer.send('processVideo', ab)
 	},
 })

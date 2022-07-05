@@ -8,8 +8,10 @@ import { createWindow } from './window'
 // All main IPC functioning
 import './ipcMain'
 
-// Catches uncaught exceptions
-unhandled({ showDialog: true })
+// Catches uncaught exceptions in packaged app
+if (app.isPackaged) {
+	unhandled({ showDialog: true })
+}
 
 /**
  * 4. Enable process sandboxing

@@ -10,6 +10,9 @@ coverage
 release/app/build
 release/package
 
+# preload development bundle
+src/preload/preload.dev.js
+
 # eslintcache for the lint-staged pre-commit
 .eslintcache
 

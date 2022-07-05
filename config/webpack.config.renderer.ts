@@ -77,17 +77,23 @@ const rendererConfig: webpack.Configuration = {
 			isDevelopment,
 			nodeModules: paths.nodeModulesPath,
 		}),
-		new CspHtmlWebpackPlugin(
-			Object.entries(CSP).reduce((acc: Record<string, string[]>, [key, value]) => {
-				acc[key] = [value]
-				return acc
-			}, {}),
-			{
-				hashEnabled: {
-					'style-src': false,
-				},
-			}
-		),
+		isProduction &&
+			new CspHtmlWebpackPlugin(
+				Object.entries(CSP).reduce((acc: Record<string, string[]>, [key, value]) => {
+					acc[key] = [value]
+					return acc
+				}, {}),
+				{
+					hashEnabled: {
+						'style-src': false,
+					},
+					// TODO: remove this once published as it's only to allow testing
+					// TailwindCSS from cdn for production testing
+					nonceEnabled: {
+						'style-src': false,
+					},
+				}
+			),
 	].filter(Boolean) as webpack.WebpackPluginInstance[],
 }
 
