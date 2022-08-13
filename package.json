@@ -1,9 +1,13 @@
 {
-  "name": "electron-react-typescript-webpack",
+  "name": "secure-electron-boilerplate",
   "version": "0.2.2",
   "description": "Fast, secure, unopinionated, Electron boilerplate",
   "author": "Lawrence Good",
   "license": "MIT",
+  "repository": {
+    "type": "github",
+    "url": "https://github.com/lgoodcode/secure-electron-boilerplate"
+  },
   "scripts": {
     "clean": "ts-node scripts/clean.js --run",
     "start": "cross-env NODE_ENV=development ts-node scripts/start.ts",
@@ -16,8 +20,7 @@
     "pack:dir": "ts-node scripts/checkBuild.ts --run && electron-builder --dir",
     "pack:dev": "cross-env DEBUG_PROD=true electron release/app",
     "test": "jest",
-    "test:watch": "jest --watchAll",
-    "postinstall": "electron-builder install-app-deps"
+    "test:watch": "jest --watchAll"
   },
   "build": {
     "productName": "Secure Electron Boilerplate",
@@ -65,9 +68,6 @@
       "src/**/*.{js,jsx,ts,tsx}",
       "!src/**/*.d.ts"
     ],
-    "setupFiles": [
-      "<rootDir>/scripts/checkBuild.ts"
-    ],
     "setupFilesAfterEnv": [
       "<rootDir>/src/__tests__/setupTests.js"
     ],
@@ -79,7 +79,7 @@
       "url": "http://localhost/"
     },
     "moduleNameMapper": {
-      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/.erb/mocks/fileMock.js",
+      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/src/__tests__/mocks/fileMock.js",
       "\\.(css|less|sass|scss)$": "identity-obj-proxy"
     },
     "transform": {
