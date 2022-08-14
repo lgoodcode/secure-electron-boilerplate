@@ -3,21 +3,20 @@
 export type Channels = 'getVideoSources' | 'processVideo'
 
 declare global {
-	interface Window {
-		electron: {
-			ipcRenderer: {
-				send(channel: Channels, args?: unknown[]): void
-				on(channel: Channels, handler: (...args: unknown[]) => void): (() => void) | undefined
-				once(channel: Channels, handler: (...args: unknown[]) => void): void
-				off(channel: Channels): void
-			}
-		}
-		processVideo(ab: ArrayBuffer): void
-	}
+  interface Window {
+    ipcRenderer: {
+      send(channel: Channels, args?: unknown[]): void
+      on(channel: Channels, handler: (...args: unknown[]) => void): (() => void) | undefined
+      once(channel: Channels, handler: (...args: unknown[]) => void): void
+      off(channel: Channels): void
+    }
 
-	namespace Electron {
-		interface IpcMain {
-			on(channel: Channels, listener: (event: IpcMainEvent, ...args: any[]) => void): this
-		}
-	}
+    processVideo(ab: ArrayBuffer): void
+  }
+
+  namespace Electron {
+    interface IpcMain {
+      on(channel: Channels, listener: (event: IpcMainEvent, ...args: any[]) => void): this
+    }
+  }
 }

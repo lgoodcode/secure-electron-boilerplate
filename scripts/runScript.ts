@@ -6,25 +6,25 @@ import { spawn } from 'child_process'
  * was successful or not.
  */
 const runScript = (name: string, command: string, args: string[]) =>
-	new Promise<string | null>((res) => {
-		// Keep track of whether callback has been invoked to prevent multiple invocations
-		let invoked = false
-		const process = spawn(command, args, {
-			shell: true,
-			stdio: 'inherit',
-		})
+  new Promise<string | null>((res) => {
+    // Keep track of whether callback has been invoked to prevent multiple invocations
+    let invoked = false
+    const process = spawn(command, args, {
+      shell: true,
+      stdio: 'inherit',
+    })
 
-		process.on('error', () => {
-			if (invoked) return
-			invoked = true
-			res(name)
-		})
+    process.on('error', () => {
+      if (invoked) return
+      invoked = true
+      res(name)
+    })
 
-		process.on('exit', (code: number) => {
-			if (invoked) return
-			invoked = true
-			res(code === 0 ? null : name)
-		})
-	})
+    process.on('exit', (code: number) => {
+      if (invoked) return
+      invoked = true
+      res(code === 0 ? null : name)
+    })
+  })
 
 export default runScript

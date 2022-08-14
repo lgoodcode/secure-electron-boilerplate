@@ -10,7 +10,7 @@ import './ipcMain'
 
 // Catches uncaught exceptions in packaged app
 if (app.isPackaged) {
-	unhandled({ showDialog: true })
+  unhandled({ showDialog: true })
 }
 
 /**
@@ -30,20 +30,20 @@ app.enableSandbox()
  * the other instance then restore and focus it.
  */
 if (!app.requestSingleInstanceLock()) {
-	app.quit()
+  app.quit()
 } else {
-	app.on('second-instance', async () => {
-		let window = BrowserWindow.getAllWindows().find((w) => !w.isDestroyed())
+  app.on('second-instance', async () => {
+    let window = BrowserWindow.getAllWindows().find((w) => !w.isDestroyed())
 
-		if (!window) {
-			window = await createWindow()
-		}
+    if (!window) {
+      window = await createWindow()
+    }
 
-		if (window.isMinimized()) {
-			window.restore()
-		}
-		window.focus()
-	})
+    if (window.isMinimized()) {
+      window.restore()
+    }
+    window.focus()
+  })
 }
 
 /**
@@ -51,9 +51,9 @@ if (!app.requestSingleInstanceLock()) {
  * after all windows have been closed
  */
 app.on('window-all-closed', () => {
-	if (process.platform !== 'darwin') {
-		app.quit()
-	}
+  if (process.platform !== 'darwin') {
+    app.quit()
+  }
 })
 
 /**
@@ -61,104 +61,104 @@ app.on('window-all-closed', () => {
  * function `permisionHandler` and `configureCSP`.
  */
 app
-	.whenReady()
-	.then(() => {
-		createWindow()
-		app.on('activate', () => {
-			// On macOS it's common to re-create a window in the app when the
-			// dock icon is clicked and there are no other windows open.
-			if (BrowserWindow.getAllWindows().length === 0) {
-				createWindow()
-			}
-		})
-	})
-	.then(permissionsHandler)
-	.then(configureCsp)
-	.catch((err) => console.error('Failed to create window', err))
+  .whenReady()
+  .then(() => {
+    createWindow()
+    app.on('activate', () => {
+      // On macOS it's common to re-create a window in the app when the
+      // dock icon is clicked and there are no other windows open.
+      if (BrowserWindow.getAllWindows().length === 0) {
+        createWindow()
+      }
+    })
+  })
+  .then(permissionsHandler)
+  .then(configureCsp)
+  .catch((err) => console.error('Failed to create window', err))
 
 /**
  * Install devtool extensions for development
  */
 if (!app.isPackaged) {
-	app.whenReady().then(async function installDevTools() {
-		await import('../lib/installExtensions')
-	})
+  app.whenReady().then(async function installDevTools() {
+    await import('../lib/installExtensions')
+  })
 }
 
 /**
  * Check for updates when packaged
  */
 // if (app.isPackaged) {
-// 	app.whenReady().then(async function checkForUpdates() {
-// 		const { autoUpdater } = await import('electron-updater')
-// 		autoUpdater.checkForUpdatesAndNotify()
-// 	})
+//   app.whenReady().then(async function checkForUpdates() {
+//     const { autoUpdater } = await import('electron-updater')
+//     autoUpdater.checkForUpdatesAndNotify()
+//   })
 // }
 
 /**
  * Handles rendering and controlling web pages.
  */
 app.on('web-contents-created', (_, contents) => {
-	/**
-	 * 12. Verify WebView options before creation
-	 *
-	 * https://www.electronjs.org/docs/latest/tutorial/security#12-verify-webview-options-before-creation
-	 */
-	contents.on('will-attach-webview', (event, webPreferences, params) => {
-		const parsedURL = new URL(params.src)
+  /**
+   * 12. Verify WebView options before creation
+   *
+   * https://www.electronjs.org/docs/latest/tutorial/security#12-verify-webview-options-before-creation
+   */
+  contents.on('will-attach-webview', (event, webPreferences, params) => {
+    const parsedURL = new URL(params.src)
 
-		// Strip away preload scripts if unused or verify their location is legitimate
-		delete webPreferences.preload
+    // Strip away preload scripts if unused or verify their location is legitimate
+    delete webPreferences.preload
 
-		// Disable Node.js integration
-		webPreferences.nodeIntegration = false
+    // Disable Node.js integration
+    webPreferences.nodeIntegration = false
 
-		// Verify URL being loaded
-		if (!isValidOrigin(parsedURL.origin)) {
-			event.preventDefault()
-		} else {
-			console.error(
-				`The application blocked an attempt to create a WebView with an invalid URL: "${parsedURL.href}"`
-			)
-		}
-	})
+    // Verify URL being loaded
+    if (!isValidOrigin(parsedURL.origin)) {
+      event.preventDefault()
+    } else {
+      console.error(
+        `The application blocked an attempt to create a WebView with an invalid URL: "${parsedURL.href}"`
+      )
+    }
+  })
 
-	/**
-	 * 13. Limit navigation to external websites
-	 *
-	 * If the requested origin is not included in the whitelist origins, block
-	 * the request, otherwise allow it and open in user's default browser.
-	 *
-	 * https://www.electronjs.org/docs/latest/tutorial/security#13-disable-or-limit-navigation
-	 */
-	const navigationHandler = (type: string) => (contentsEvent: Event, url: string) => {
-		const parsedUrl = new URL(url)
+  /**
+   * 13. Limit navigation to external websites
+   *
+   * If the requested origin is not included in the whitelist origins, block
+   * the request, otherwise allow it and open in user's default browser.
+   *
+   * https://www.electronjs.org/docs/latest/tutorial/security#13-disable-or-limit-navigation
+   */
+  const navigationHandler = (type: string) => (contentsEvent: Event, url: string) => {
+    const parsedUrl = new URL(url)
 
-		// Log and prevent the app from navigating to a new page if that page's origin is not whitelisted
-		if (isValidOrigin(parsedUrl.origin)) {
-			return shell.openExternal(parsedUrl.href)
-		}
-		console.error(`The application blocked an attempt to ${type} to an invalid URL: "${parsedUrl}"`)
+    // Log and prevent the app from navigating to a new page if that page's origin is not whitelisted
+    if (isValidOrigin(parsedUrl.origin)) {
+      return shell.openExternal(parsedUrl.href)
+    }
+    console.error(`The application blocked an attempt to ${type} to an invalid URL: "${parsedUrl}"`)
 
-		contentsEvent.preventDefault()
-	}
+    contentsEvent.preventDefault()
+  }
 
-	contents.on('will-navigate', navigationHandler('navigate'))
-	contents.on('will-redirect', navigationHandler('redirect'))
+  contents.on('will-navigate', navigationHandler('navigate'))
+  contents.on('will-redirect', navigationHandler('redirect'))
 
-	/**
-	 * 14. Disable or limit creation of new windows
-	 *
-	 * Called before creating a window a new window is requested by the renderer,
-	 * e.g. by window.open(), a link with target="_blank", shift+clicking on a
-	 * link, or submitting a form with <form target="_blank">.
-	 *
-	 * https://www.electronjs.org/docs/latest/tutorial/security#14-disable-or-limit-creation-of-new-windows
-	 */
-	contents.setWindowOpenHandler(({ url }) => {
-		if (isValidOrigin(url)) {
-			shell.openExternal(url)
-		}
-		return { action: 'deny' }
-	})
+  /**
+   * 14. Disable or limit creation of new windows
+   *
+   * Called before creating a window a new window is requested by the renderer,
+   * e.g. by window.open(), a link with target="_blank", shift+clicking on a
+   * link, or submitting a form with <form target="_blank">.
+   *
+   * https://www.electronjs.org/docs/latest/tutorial/security#14-disable-or-limit-creation-of-new-windows
+   */
+  contents.setWindowOpenHandler(({ url }) => {
+    if (isValidOrigin(url)) {
+      shell.openExternal(url)
+    }
+    return { action: 'deny' }
+  })
 })

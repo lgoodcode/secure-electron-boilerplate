@@ -1,0 +1,25 @@
+name: Publish
+
+on:
+  push:
+    branches:
+      - publish
+
+jobs:
+  publish:
+    runs-on: ubunutu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Use NodeJS
+        uses: actions/setup-node@master
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build
+
+      - name: Publish
+        run: npm run publish

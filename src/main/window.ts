@@ -10,73 +10,73 @@ export let mainWindow: BrowserWindow | null = null
 // Debug features like the shortcuts for inspector and dev tools.
 // The package will ONLY run in development mode, even if explicitly set.
 if (!app.isPackaged) {
-	import('electron-debug').then(({ default: debug, openDevTools }) => {
-		debug()
-		openDevTools()
-	})
+  import('electron-debug').then(({ default: debug, openDevTools }) => {
+    debug()
+    openDevTools()
+  })
 }
 export const createWindow = async () => {
-	mainWindow = new BrowserWindow({
-		show: false,
-		width: 1200,
-		height: 768,
-		minWidth: 640,
-		minHeight: 840,
-		maxWidth: 1280,
-		maxHeight: 1024,
-		icon: getAsset('icon.ico'),
-		webPreferences: {
-			// Allow devTools in development or debugging production build
-			devTools: !app.isPackaged || process.env.DEBUG_PROD === 'true',
-			// When packaged as an electron app, it will look within the asar file,
-			// which will contain the files from the release/app/build directory,
-			// so we use __dirname to get it relative to that directory.
-			preload: app.isPackaged
-				? join(__dirname, 'preload.js')
-				: join(srcPreloadPath, 'preload.dev.js'),
-			// Security features explicitly configured
-			contextIsolation: true,
-			nodeIntegration: false,
-			webSecurity: true,
-			webviewTag: false,
-			nodeIntegrationInWorker: false,
-			nodeIntegrationInSubFrames: false,
-			allowRunningInsecureContent: false,
-			experimentalFeatures: false,
-			enableBlinkFeatures: undefined,
-		},
-	})
+  mainWindow = new BrowserWindow({
+    show: false,
+    width: 1200,
+    height: 768,
+    minWidth: 640,
+    minHeight: 840,
+    maxWidth: 1280,
+    maxHeight: 1024,
+    icon: getAsset('icon.ico'),
+    webPreferences: {
+      // Allow devTools in development or debugging production build
+      devTools: !app.isPackaged || process.env.DEBUG_PROD === 'true',
+      // When packaged as an electron app, it will look within the asar file,
+      // which will contain the files from the release/app/build directory,
+      // so we use __dirname to get it relative to that directory.
+      preload: app.isPackaged
+        ? join(__dirname, 'preload.js')
+        : join(srcPreloadPath, 'preload.dev.js'),
+      // Security features explicitly configured
+      contextIsolation: true,
+      nodeIntegration: false,
+      webSecurity: true,
+      webviewTag: false,
+      nodeIntegrationInWorker: false,
+      nodeIntegrationInSubFrames: false,
+      allowRunningInsecureContent: false,
+      experimentalFeatures: false,
+      enableBlinkFeatures: undefined,
+    },
+  })
 
-	// Load the index.html file. Will either be root of localhost in development
-	// or in the src path as a file:// url in production
-	mainWindow.loadURL(resolveHtmlPath('index.html'))
+  // Load the index.html file. Will either be root of localhost in development
+  // or in the src path as a file:// url in production
+  mainWindow.loadURL(resolveHtmlPath('index.html'))
 
-	// Build the menu
-	new MenuBuilder(mainWindow).buildMenu()
+  // Build the menu
+  new MenuBuilder(mainWindow).buildMenu()
 
-	// When window is ready, check settings and show minimized if needed
-	// otherwise show regular window and then check if in devention mode
-	// to open the devtools
-	mainWindow.on('ready-to-show', () => {
-		if (!mainWindow) {
-			throw new Error('mainWindow is not defined')
-		}
+  // When window is ready, check settings and show minimized if needed
+  // otherwise show regular window and then check if in devention mode
+  // to open the devtools
+  mainWindow.on('ready-to-show', () => {
+    if (!mainWindow) {
+      throw new Error('mainWindow is not defined')
+    }
 
-		if (process.env.START_MINIZED) {
-			mainWindow.minimize()
-		} else {
-			mainWindow.show()
-		}
+    if (process.env.START_MINIZED) {
+      mainWindow.minimize()
+    } else {
+      mainWindow.show()
+    }
 
-		// Open the devTools for debugging production build
-		if (process.env.DEBUG_PROD === 'true') {
-			mainWindow.webContents.openDevTools()
-		}
-	})
+    // Open the devTools for debugging production build
+    if (process.env.DEBUG_PROD === 'true') {
+      mainWindow.webContents.openDevTools()
+    }
+  })
 
-	mainWindow.on('closed', () => {
-		mainWindow = null
-	})
+  mainWindow.on('closed', () => {
+    mainWindow = null
+  })
 
-	return mainWindow
+  return mainWindow
 }

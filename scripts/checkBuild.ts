@@ -8,30 +8,30 @@ import { buildMainFile, buildRendererFile } from '../config/paths'
  * and throws and error if the directories are not found.
  */
 const checkBuild = (test?: boolean) =>
-	new Promise<boolean>((res) => {
-		if (!existsSync(buildMainFile)) {
-			console.log(chalk.red.bold('The main process has not been built yet.'))
+  new Promise<boolean>((res) => {
+    if (!existsSync(buildMainFile)) {
+      console.log(chalk.red.bold('The main process has not been built yet.'))
 
-			if (test) {
-				process.exit(1)
-			}
-			return res(false)
-		}
+      if (test) {
+        process.exit(1)
+      }
+      return res(false)
+    }
 
-		if (!existsSync(buildRendererFile)) {
-			console.error(chalk.red.bold('The renderer process has not been built yet.'))
+    if (!existsSync(buildRendererFile)) {
+      console.error(chalk.red.bold('The renderer process has not been built yet.'))
 
-			if (test) {
-				process.exit(1)
-			}
-			return res(false)
-		}
+      if (test) {
+        process.exit(1)
+      }
+      return res(false)
+    }
 
-		res(true)
-	})
+    res(true)
+  })
 
 if (process.env.NODE_ENV === 'test' || process.argv.slice(2).includes('--run')) {
-	checkBuild(true)
+  checkBuild(true)
 }
 
 export default checkBuild

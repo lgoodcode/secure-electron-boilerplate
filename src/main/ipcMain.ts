@@ -11,35 +11,35 @@ import { writeFile } from 'fs'
  * to ensure that it is sent to the proper sender.
  */
 ipcMain.on('getVideoSources', async (event) => {
-	if (!validateIpcSender(event.senderFrame)) return
+  if (!validateIpcSender(event.senderFrame)) return
 
-	const sources = await desktopCapturer.getSources({
-		types: ['window', 'screen'],
-	})
+  const sources = await desktopCapturer.getSources({
+    types: ['window', 'screen'],
+  })
 
-	const videoOptionsMenu = Menu.buildFromTemplate(
-		sources.map((source) => ({
-			label: source.name,
-			click: () => event.reply('getVideoSources', source.id),
-		}))
-	)
-	// Display options
-	videoOptionsMenu.popup()
+  const videoOptionsMenu = Menu.buildFromTemplate(
+    sources.map((source) => ({
+      label: source.name,
+      click: () => event.reply('getVideoSources', source.id),
+    }))
+  )
+  // Display options
+  videoOptionsMenu.popup()
 })
 
 ipcMain.on('processVideo', async (event, ab) => {
-	if (!validateIpcSender(event.senderFrame)) return
+  if (!validateIpcSender(event.senderFrame)) return
 
-	const buffer = Buffer.from(ab)
+  const buffer = Buffer.from(ab)
 
-	const { filePath } = await dialog.showSaveDialog({
-		buttonLabel: 'Save video',
-		defaultPath: `recording-${Date.now()}.webm`,
-	})
+  const { filePath } = await dialog.showSaveDialog({
+    buttonLabel: 'Save video',
+    defaultPath: `recording-${Date.now()}.webm`,
+  })
 
-	if (filePath) {
-		writeFile(filePath, buffer, () => event.reply('processVideo'))
-	} else {
-		event.reply('processVideo', 'No path seletected. Aborted saving video.')
-	}
+  if (filePath) {
+    writeFile(filePath, buffer, () => event.reply('processVideo'))
+  } else {
+    event.reply('processVideo', 'No path seletected. Aborted saving video.')
+  }
 })

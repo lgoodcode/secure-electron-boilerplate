@@ -4,21 +4,23 @@
   "description": "Fast, secure, unopinionated, Electron boilerplate",
   "author": "Lawrence Good",
   "license": "MIT",
+  "private": true,
   "repository": {
     "type": "github",
     "url": "https://github.com/lgoodcode/secure-electron-boilerplate"
   },
   "scripts": {
     "clean": "ts-node scripts/clean.js --run",
-    "start": "cross-env NODE_ENV=development ts-node scripts/start.ts",
-    "start:main": "cross-env NODE_ENV=development electronmon -r ts-node/register ./src/main/main.ts",
-    "start:preload": "webpack --config config/webpack.config.preload.ts",
+    "dev": "cross-env NODE_ENV=development ts-node scripts/start.ts",
+    "dev:main": "cross-env NODE_ENV=development electronmon -r ts-node/register ./src/main/main.ts",
+    "dev:preload": "webpack --config config/webpack.config.preload.ts",
     "build": "ts-node scripts/build.ts --run",
     "build:main": "cross-env NODE_ENV=production webpack --config config/webpack.config.main.ts",
     "build:renderer": "cross-env NODE_ENV=production webpack --config config/webpack.config.renderer.ts",
     "pack": "npm run build && electron-builder",
     "pack:dir": "ts-node scripts/checkBuild.ts --run && electron-builder --dir",
     "pack:dev": "cross-env DEBUG_PROD=true electron release/app",
+    "publish": "electron-builder",
     "test": "jest",
     "test:watch": "jest --watchAll"
   },
@@ -33,6 +35,9 @@
     },
     "extraResources": [
       "./assets/**"
+    ],
+    "publish": [
+      "github"
     ],
     "win": {
       "target": [
@@ -83,7 +88,7 @@
       "\\.(css|less|sass|scss)$": "identity-obj-proxy"
     },
     "transform": {
-      "\\.(ts|tsx|js|jsx)$": "ts-jest"
+      "\\.(ts|tsx|js|jsx)$": "@swc/jest"
     }
   },
   "dependencies": {
@@ -93,6 +98,8 @@
   },
   "devDependencies": {
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.7",
+    "@swc/core": "^1.2.231",
+    "@swc/jest": "^0.2.22",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",
     "@testing-library/user-event": "^14.2.1",
@@ -134,9 +141,8 @@
     "react-refresh": "^0.14.0",
     "rimraf": "^3.0.2",
     "style-loader": "^3.3.1",
+    "swc-loader": "^0.2.3",
     "terser-webpack-plugin": "^5.3.3",
-    "ts-jest": "^28.0.5",
-    "ts-loader": "^9.3.1",
     "ts-node": "^10.8.1",
     "typescript": "^4.7.4",
     "webpack": "^5.73.0",
